@@ -194,16 +194,15 @@ def build_interface(iface, iface_type, enabled, settings, config=_DEBIAN_INTERFA
     
         salt '*' ip.build_interface eth0 iface True <settings>
     '''
+    # create a deep copy so we can remove things as processed
+    settings = copy.deepcopy(settings)
+    
     # a bit of a hack to allow for testing with network.managed
     config = settings.pop('config', config)
     
     # parse the current file
     current = _parse_interfaces(config)
-    
     sync = False
-    
-    # create a deep copy so we can remove things as processed
-    settings = copy.deepcopy(settings)
     
     # remove the auto added items
     for x in ('state', 'order', 'fun'):
@@ -285,7 +284,7 @@ def _cmd_exec(cmd):
                         
     return result['stdout']
 
-def up(iface, iface_type=None, opts=None):
+def up(iface, iface_type=None, opts={}):
     '''
     Bring up an interface
     Additional options are to remain compatible with network.managed
@@ -297,9 +296,12 @@ def up(iface, iface_type=None, opts=None):
     
     # check for the presence of a previous version
     _previous_down(iface)
-    return _cmd_exec('ifup {0}'.format(iface))
+    
+    cmd = 'ifup {0}'.format(iface)
+    if 'config' in opts: cmd += " -i {0}".format(opts['config'])
+    return _cmd_exec(cmd)
 
-def down(iface, iface_type=None, opts=None):
+def down(iface, iface_type=None, opts={}):
     '''
     Bring down an interface
     Additional options are to remain compatible with network.managed
@@ -308,10 +310,14 @@ def down(iface, iface_type=None, opts=None):
 
         salt '*' ip.down eth0
     '''
+    # if there was a previous config use that instead
     if _previous_down(iface):
         return "Brought down {0} using previous".format(iface)
+    
     try:
-        _cmd_exec('ifdown {0}'.format(iface))
+        cmd = 'ifdown {0}'.format(iface)
+        if 'config' in opts: cmd += " -i {0}".format(opts['config'])
+        _cmd_exec(cmd)
         return "Brought down {0}".format(iface);
     except:
         msg = "Failed to bring down {0}".format(iface)
