@@ -3,7 +3,7 @@ Created on 03/03/2013
 
 @author: tris
 '''
-import integration, yaml, os.path, shutil
+import integration, yaml, os.path, shutil, subprocess
 from saltunittest import skipIf
 from salt.modules import shaping
 
@@ -14,6 +14,8 @@ except ImportError:
     has_mock = False
 
 SCRIPT_FILE = os.path.join(integration.TMP, 'tc_script_eth0')
+
+IFACE = subprocess.check_output(['ifquery', '--list']).split('\n')[1]
 
 class ShapingModuleTest(integration.ModuleCase):
     
@@ -28,10 +30,10 @@ class ShapingModuleTest(integration.ModuleCase):
         '''
         Need to check more once the module is finished
         '''
-        result = self.run_function('tc.stats', ['eth0'])
+        result = self.run_function('tc.stats', [IFACE])
         self.assertTrue(result[0][0].startswith('qdisc'))
         
-        self.assertEqual(self.run_function('tc.stats', ['eth0', 'class']), [])
+        self.assertEqual(self.run_function('tc.stats', [IFACE, 'class']), [])
         
     def test_get_tc_script(self):
         
