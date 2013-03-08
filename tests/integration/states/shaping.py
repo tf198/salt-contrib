@@ -42,19 +42,3 @@ tc qdisc add dev eth0 root handle 1: prio
         ret = self.run_state('shaping.qdisc', name='eth0', type='tbf', script=SCRIPT_FILE, apply=False)
         self.assertSaltTrueReturn(ret)
         self.assertSaltCommentRegexpMatches(ret, 'Skipping apply tc script <enabled=True>')
-    
-    @destructiveTest
-    @skipIf(os.geteuid() is not 0, 'you must be root to run this test')
-    def test_actual(self):
-        '''
-        Note: not actually tested yet!
-        '''
-        ret = self.run_state('shaping.qdisc', name='eth0', type='prio')
-        self.assertSaltTrueReturn(ret)
-        
-        result = self.run_function('tc.stats', ['eth0'])
-        self.assertTrue(result[0][0].startswith('qdisc prio'))
-        
-        # try and put it back
-        self.run_function('tc.disable', ['eth0'])
-        self.assertTrue(result[0][0].startswith('qdisc pfifo_fast'))

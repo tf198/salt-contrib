@@ -1,10 +1,10 @@
 from unittest import TestCase
-from salt.modules import shaping
+from salt.modules import tc
 import yaml
 
-class ShapingModuleTest(TestCase):
+class TCModuleTest(TestCase):
     '''
-    Tests the build logic for the shaping module
+    Tests the build logic for the tc module
     '''
     
     def assertBuildResult(self, state, result_text):
@@ -16,7 +16,7 @@ class ShapingModuleTest(TestCase):
         for x in data[iface]['shaping.qdisc']:
             qdisc.update(x)
         
-        result = shaping.build_script(iface, qdisc, testing=True)
+        result = tc.build_script(iface, qdisc, testing=True)
         
         self.assertListEqual(result_text.strip().split('\n'), [ line.strip() for line in result ])
         

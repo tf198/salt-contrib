@@ -5,7 +5,7 @@ Created on 03/03/2013
 '''
 import integration, yaml, os.path, shutil, subprocess
 from saltunittest import skipIf
-from salt.modules import shaping
+from salt.modules import tc
 
 try:
     from mock import MagicMock, patch
@@ -15,7 +15,7 @@ except ImportError:
 
 SCRIPT_FILE = os.path.join(integration.TMP, 'tc_script_eth0')
 
-class ShapingModuleTest(integration.ModuleCase):
+class TCModuleTest(integration.ModuleCase):
     
     def tearDown(self):
         if os.path.exists(SCRIPT_FILE):
@@ -55,13 +55,13 @@ class ShapingModuleTest(integration.ModuleCase):
         if not has_mock:
             self.skipTest("Need mock")
             
-        with patch.object(shaping, '_cmd_exec', return_value='') as mock:
-            self.assertEqual(shaping.enable('eth0', SCRIPT_FILE), '')
+        with patch.object(tc, '_cmd_exec', return_value='') as mock:
+            self.assertEqual(tc.enable('eth0', SCRIPT_FILE), '')
             mock.assert_called_once_with(SCRIPT_FILE)
     
     @skipIf(has_mock is False, "Need mock")
     def test_disable(self):
-        with patch.object(shaping, '_cmd_exec', return_value='') as mock:
-            self.assertEqual(shaping.disable('eth0'), '')
+        with patch.object(tc, '_cmd_exec', return_value='') as mock:
+            self.assertEqual(tc.disable('eth0'), '')
             mock.assert_called_once_with('tc qdisc del dev eth0 root')
         
