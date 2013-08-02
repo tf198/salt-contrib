@@ -1,6 +1,6 @@
 from salt.modules import debian_ip
 from salt import exceptions
-from saltunittest import skipIf
+from unittest import skipIf
 import os.path, shutil
 import integration
 
