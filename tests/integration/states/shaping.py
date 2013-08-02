@@ -1,5 +1,6 @@
-import integration, os.path, shutil
-from saltunittest import destructiveTest, skipIf
+import integration
+import os.path
+import shutil
 
 SCRIPT_FILE = os.path.join(integration.TMP, 'tc_script_eth0')
 

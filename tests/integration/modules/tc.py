@@ -4,7 +4,7 @@ Created on 03/03/2013
 @author: tris
 '''
 import integration, yaml, os.path, shutil, subprocess
-from saltunittest import skipIf
+from unittest import skipIf
 from salt.modules import tc
 
 try:
